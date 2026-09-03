@@ -1,43 +1,652 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<title>Front Desk Scheduler</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Front Desk Scheduler V1.2</title>
 <style>
-:root{--bg:#f6f7f9;--panel:#fff;--text:#17202a;--muted:#6b7280;--line:#dfe4ea;--accent:#234c3f;--hour:72px;--blue:#dbeafe;--blue-b:#93c5fd;--red:#fee2e2;--red-b:#fca5a5;--green:#dcfce7;--green-b:#86efac;--gray:#e5e7eb;--gray-b:#cbd5e1}*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}button,input,select{font:inherit}.app{max-width:1600px;margin:auto;padding:16px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.top h1{font-size:20px;margin:0}.sub{font-size:13px;color:var(--muted);margin-top:4px}.btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 13px;cursor:pointer}.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}.legend{display:flex;gap:13px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:12px 0}.schedule-shell{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:14px}.schedule{display:grid;grid-template-columns:76px repeat(7,minmax(138px,1fr));min-width:1120px}.head{padding:11px 6px;text-align:center;border-right:1px solid var(--line);border-bottom:1px solid var(--line);font-size:13px;font-weight:700;background:#fff}.timecol{height:calc(var(--hour)*11);position:relative;border-right:1px solid var(--line)}.time{position:absolute;right:8px;transform:translateY(-7px);font-size:11px;color:var(--muted)}.lane{height:calc(var(--hour)*11);position:relative;border-right:1px solid var(--line);background-image:linear-gradient(to bottom,transparent 35px,rgba(223,228,234,.5) 35px,rgba(223,228,234,.5) 36px,transparent 36px),repeating-linear-gradient(to bottom,transparent 0,transparent 71px,var(--line) 71px,var(--line) 72px)}.booking{position:absolute;left:5px;right:5px;border-radius:10px;padding:6px 7px;border:1px solid;overflow:hidden;text-align:left;cursor:pointer}.booking.upcoming{background:var(--blue);border-color:var(--blue-b)}.booking.progress{background:var(--red);border-color:var(--red-b)}.booking.completed{background:var(--green);border-color:var(--green-b)}.booking.cancelled{background:var(--gray);border-color:var(--gray-b);opacity:.72}.btitle{font-size:12px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bmeta{font-size:10px;color:#475569;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bottom{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;margin-top:14px}.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}.card h2{font-size:14px;margin:0 0 9px}.note{font-size:12px;color:var(--muted);line-height:1.6}table{width:100%;border-collapse:collapse}th,td{font-size:12px;padding:8px;border-bottom:1px solid var(--line);text-align:left}th{color:var(--muted)}.mobile{display:none}.filters{display:flex;gap:8px;overflow:auto;margin-bottom:10px}.chip{white-space:nowrap;border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 10px}.chip.active{background:#e8efec;border-color:#9fb8ae}.mlist{display:grid;gap:10px}.mcard{background:#fff;border:1px solid var(--line);border-left:6px solid var(--blue-b);border-radius:12px;padding:12px;text-align:left}.mcard.progress{border-left-color:var(--red-b)}.mcard.completed{border-left-color:var(--green-b)}.mcard.cancelled{border-left-color:var(--gray-b)}.mtop{display:flex;justify-content:space-between;gap:8px;font-size:13px}.mtime{font-weight:800}.msub{font-size:12px;color:var(--muted);margin-top:4px}.modal{display:none;position:fixed;inset:0;z-index:20;background:rgba(15,23,42,.42);align-items:flex-start;justify-content:center;padding:28px 14px;overflow:auto}.modal.open{display:flex}.panel{width:min(720px,100%);background:#fff;border-radius:16px;padding:18px}.paneltop{display:flex;align-items:center;justify-content:space-between}.paneltop h2{margin:0;font-size:18px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}.field label{display:block;font-size:11px;color:var(--muted);font-weight:700;margin-bottom:5px}.field input,.field select{width:100%;min-height:44px;padding:8px 9px;border:1px solid var(--line);border-radius:9px;background:#fff;font-size:16px}.segmentbox{margin-top:14px;padding:12px;border:1px dashed var(--line);border-radius:12px}.segmentrow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}.error{display:none;margin-top:12px;padding:10px;border-radius:10px;background:#fff1f2;border:1px solid #fecdd3;color:#9f1239;font-size:12px}.error.show{display:block}.panelactions{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:16px}@media(max-width:760px){.app{padding:12px}.desktop{display:none}.mobile{display:block}.bottom{grid-template-columns:1fr}.grid2,.segmentrow{grid-template-columns:1fr}}
+:root{
+  --bg:#f6f7f9;--panel:#fff;--text:#17202a;--muted:#6b7280;--line:#dfe4ea;--accent:#234c3f;
+  --hour:72px;--blue:#dbeafe;--blue-b:#93c5fd;--red:#fee2e2;--red-b:#fca5a5;
+  --green:#dcfce7;--green-b:#86efac;--gray:#e5e7eb;--gray-b:#cbd5e1;--lock:#eef0f2
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.app{max-width:1600px;margin:auto;padding:16px}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.top h1{font-size:20px;margin:0}
+.sub{font-size:13px;color:var(--muted);margin-top:4px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 13px;color:var(--text)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+.btn.small{padding:7px 9px;font-size:12px}
+.btn.ghost{background:transparent}
+.daybar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:12px 0 8px}
+.daylabel{font-size:12px;color:var(--muted);font-weight:700}
+.teamchip{display:inline-flex;align-items:center;gap:6px;border:1px solid #b7c8c1;background:#f3f8f6;border-radius:999px;padding:6px 9px;font-size:12px}
+.teamchip strong{color:var(--accent)}
+.legend{display:flex;gap:13px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:8px 0 12px}
+.schedule-shell{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:14px}
+.schedule{display:grid;grid-template-columns:76px repeat(7,minmax(138px,1fr));min-width:1120px}
+.head{padding:11px 6px;text-align:center;border-right:1px solid var(--line);border-bottom:1px solid var(--line);font-size:13px;font-weight:700;background:#fff;position:sticky;top:0;z-index:8}
+.timecol{height:calc(var(--hour)*11);position:relative;border-right:1px solid var(--line)}
+.time{position:absolute;right:8px;transform:translateY(-7px);font-size:11px;color:var(--muted)}
+.lane{height:calc(var(--hour)*11);position:relative;border-right:1px solid var(--line);
+background-image:linear-gradient(to bottom,transparent 35px,rgba(223,228,234,.5) 35px,rgba(223,228,234,.5) 36px,transparent 36px),
+repeating-linear-gradient(to bottom,transparent 0,transparent 71px,var(--line) 71px,var(--line) 72px)}
+.booking{position:absolute;left:5px;right:5px;border-radius:10px;padding:6px 7px;border:1px solid;overflow:hidden;text-align:left;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;z-index:4}
+.booking:active{cursor:grabbing}
+.booking.dragging{z-index:12;opacity:.82;box-shadow:0 10px 24px rgba(15,23,42,.18);pointer-events:none}
+.booking.upcoming{background:var(--blue);border-color:var(--blue-b)}
+.booking.progress{background:var(--red);border-color:var(--red-b)}
+.booking.completed{background:var(--green);border-color:var(--green-b)}
+.booking.cancelled{background:var(--gray);border-color:var(--gray-b);opacity:.72}
+.btitle{font-size:12px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bmeta{font-size:10px;color:#475569;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.roomlock{position:absolute;left:0;right:0;background:repeating-linear-gradient(135deg,#eff1f3,#eff1f3 8px,#e4e7ea 8px,#e4e7ea 16px);border-top:1px dashed #aeb5bd;border-bottom:1px dashed #aeb5bd;z-index:2;pointer-events:none;display:flex;align-items:center;justify-content:center;text-align:center;color:#66707b;font-size:10px;font-weight:700;padding:4px}
+.bottom{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;margin-top:14px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}
+.card h2{font-size:14px;margin:0 0 9px}
+.note{font-size:12px;color:var(--muted);line-height:1.6}
+table{width:100%;border-collapse:collapse}
+th,td{font-size:12px;padding:8px;border-bottom:1px solid var(--line);text-align:left}
+th{color:var(--muted)}
+.mobile{display:none}
+.filters{display:flex;gap:8px;overflow:auto;margin-bottom:10px}
+.chip{white-space:nowrap;border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 10px}
+.chip.active{background:#e8efec;border-color:#9fb8ae}
+.mlist{display:grid;gap:10px}
+.mcard{background:#fff;border:1px solid var(--line);border-left:6px solid var(--blue-b);border-radius:12px;padding:12px;text-align:left}
+.mcard.progress{border-left-color:var(--red-b)}.mcard.completed{border-left-color:var(--green-b)}.mcard.cancelled{border-left-color:var(--gray-b)}
+.mtop{display:flex;justify-content:space-between;gap:8px;font-size:13px}.mtime{font-weight:800}.msub{font-size:12px;color:var(--muted);margin-top:4px}
+.modal{display:none;position:fixed;inset:0;z-index:20;background:rgba(15,23,42,.42);align-items:flex-start;justify-content:center;padding:28px 14px;overflow:auto}
+.modal.open{display:flex}
+.panel{width:min(780px,100%);background:#fff;border-radius:16px;padding:18px}
+.panel.narrow{width:min(560px,100%)}
+.paneltop{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.paneltop h2{margin:0;font-size:18px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.field label{display:block;font-size:11px;color:var(--muted);font-weight:700;margin-bottom:5px}
+.field input,.field select{width:100%;min-height:44px;padding:8px 9px;border:1px solid var(--line);border-radius:9px;background:#fff;font-size:16px}
+.field select:disabled{background:#f3f4f6;color:#8a9199}
+.builder{margin-top:14px;padding:12px;border:1px dashed var(--line);border-radius:12px}
+.buildertop{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}
+.partrow{display:grid;grid-template-columns:1.15fr .8fr 1fr auto;gap:8px;align-items:end;margin-top:9px}
+.partrow .btn{min-height:44px}
+.error{display:none;margin-top:12px;padding:10px;border-radius:10px;background:#fff1f2;border:1px solid #fecdd3;color:#9f1239;font-size:12px}
+.error.show{display:block}
+.info{margin-top:10px;padding:9px 10px;background:#f6f9f8;border:1px solid #dbe5e1;border-radius:9px;font-size:12px;color:#52625c}
+.panelactions{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:16px}
+.setup-list{display:grid;gap:8px;margin-top:14px}
+.setup-row{display:grid;grid-template-columns:auto 1fr auto auto;gap:8px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:9px}
+.setup-num{width:27px;height:27px;border-radius:50%;display:grid;place-items:center;background:#e8efec;color:var(--accent);font-size:12px;font-weight:800}
+.setup-name{font-weight:700;font-size:13px}
+.setup-row.off{opacity:.45;background:#f7f7f8}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:40;background:#17202a;color:white;padding:10px 14px;border-radius:10px;font-size:12px;box-shadow:0 8px 30px rgba(15,23,42,.25);display:none}
+.toast.show{display:block}
+@media(max-width:760px){
+  .app{padding:12px}.desktop{display:none}.mobile{display:block}.bottom{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}
+  .partrow{grid-template-columns:1fr 1fr}.partrow .room-field{grid-column:1/2}.partrow .remove-wrap{grid-column:2/3}
+}
 </style>
 </head>
 <body>
 <div class="app">
-<div class="top"><div><h1>Front Desk Scheduler</h1><div class="sub">10:00 AM–9:00 PM · 1-hour grid · :00 / :30 booking</div></div><button class="btn primary" id="addBtn">＋ Appointment</button></div>
-<div class="legend"><span>🔵 Upcoming</span><span>🔴 In progress</span><span>🟢 Completed</span><span>⚪ Cancelled</span><span>💵 Cash tip</span><span>📱 Digital tip</span></div>
-<section class="desktop"><div class="schedule-shell"><div class="schedule" id="schedule"></div></div></section>
-<section class="mobile"><div class="filters" id="filters"></div><div class="mlist" id="mlist"></div></section>
-<div class="bottom"><div class="card"><h2>Tip summary</h2><table><thead><tr><th>Therapist</th><th>💵 Cash</th><th>📱 Digital</th><th>Digital payout</th></tr></thead><tbody id="tipRows"></tbody></table></div><div class="card"><h2>Therapists</h2><div class="note">David · Kayla · Yaya · Maggie · Tom · Steven</div><h2 style="margin-top:14px">Rules</h2><div class="note">Foot Room 1 and 2 each have two beds. Body Room 3 and 4 are private rooms.<br>Private/oil body service in a foot room locks the other bed in that room.<br>Scalp (10 min) and Chair (30 min) use no room.<br>Packages A/B/C/D can split into two room segments.</div></div></div>
+  <div class="top">
+    <div>
+      <h1>Front Desk Scheduler</h1>
+      <div class="sub" id="subtitle">10:00 AM–9:00 PM · editable 6-person roster · daily team order · click empty slot to add · drag cards to move</div>
+    </div>
+    <div class="actions">
+      <button class="btn" id="teamBtn">Today team</button>
+      <button class="btn" id="clearBtn">Clear day</button>
+      <button class="btn primary" id="addBtn">＋ Appointment</button>
+    </div>
+  </div>
+
+  <div class="daybar" id="daybar"></div>
+  <div class="legend">
+    <span>🔵 Upcoming</span><span>🔴 In progress</span><span>🟢 Completed</span><span>⚪ Cancelled</span>
+    <span>↻ Auto rotation</span><span>★ Specific therapist</span><span>▨ Gray = paired foot bed locked</span>
+  </div>
+
+  <section class="desktop"><div class="schedule-shell"><div class="schedule" id="schedule"></div></div></section>
+  <section class="mobile"><div class="filters" id="filters"></div><div class="mlist" id="mlist"></div></section>
+
+  <div class="bottom">
+    <div class="card">
+      <h2>Tip summary</h2>
+      <table><thead><tr><th>Therapist</th><th>💵 Cash</th><th>📱 Digital</th><th>Digital payout</th></tr></thead><tbody id="tipRows"></tbody></table>
+    </div>
+    <div class="card">
+      <h2>Today's rotation</h2><div class="note" id="rotationNote"></div>
+      <h2 style="margin-top:14px">Room rule</h2>
+      <div class="note">If any Body segment is placed in a double Foot Room, the paired bed is automatically locked for that time. Scalp and Chair use no room.</div>
+    </div>
+  </div>
 </div>
-<div class="modal" id="modal"><div class="panel"><div class="paneltop"><h2 id="modalTitle">New appointment</h2><button class="btn" id="closeBtn">✕</button></div><input id="editId" type="hidden"><div class="grid2"><div class="field"><label>Customer</label><input id="customer" placeholder="Name"></div><div class="field"><label>Phone</label><input id="phone" placeholder="Optional"></div><div class="field"><label>Therapist</label><select id="therapist"></select></div><div class="field"><label>Service</label><select id="service"></select></div><div class="field"><label>Start time</label><select id="start"></select></div><div class="field"><label>Status</label><select id="status"><option value="upcoming">Upcoming</option><option value="progress">In progress</option><option value="completed">Completed</option><option value="cancelled">Cancelled / no-show</option></select></div><div class="field"><label>Body privacy</label><select id="privacy"><option value="false">Clothed / shareable</option><option value="true">Oil / undress / private</option></select></div><div class="field"><label>Checkout</label><select id="checkout"><option value="pending">Pending</option><option value="paid">Paid ✓</option></select></div><div class="field"><label>Tip method</label><select id="tipMethod"><option value="none">No tip</option><option value="cash">💵 Cash</option><option value="digital">📱 Digital</option></select></div><div class="field"><label>Tip amount</label><input id="tipAmount" type="number" min="0" step="1" value="0"></div></div><div class="segmentbox"><strong style="font-size:13px">Room segments</strong><div class="note" id="durationText"></div><div class="segmentrow"><div class="field"><label>Segment 1 room</label><select id="room1"></select></div><div class="field"><label>Segment 1 duration</label><select id="dur1"></select></div></div><div class="segmentrow" id="seg2row"><div class="field"><label>Segment 2 room</label><select id="room2"></select></div><div class="field"><label>Segment 2 duration</label><select id="dur2"></select></div></div></div><div class="error" id="error"></div><div class="panelactions"><button class="btn" id="deleteBtn">Delete</button><div><button class="btn" id="cancelBtn">Cancel</button> <button class="btn primary" id="saveBtn">Save</button></div></div></div></div>
+
+<div class="toast" id="toast"></div>
+
+<div class="modal" id="setupModal">
+  <div class="panel narrow">
+    <div class="paneltop"><h2>Today's therapists & order</h2><button class="btn" id="setupClose">✕</button></div>
+    <div class="note" style="margin-top:8px">Check who is working today, then use ↑ ↓ to set the working order. Auto-assigned appointments follow this order. For appointments starting at the same time, the longer appointment gets the earlier therapist first.</div>
+    <div class="setup-list" id="setupList"></div>
+    <div class="error" id="setupError"></div>
+    <div class="panelactions"><button class="btn" id="editRosterBtn">Edit therapist names</button><button class="btn primary" id="setupSave">Save today team</button></div>
+  </div>
+</div>
+
+
+<div class="modal" id="rosterModal">
+  <div class="panel narrow">
+    <div class="paneltop"><h2>Edit therapist names</h2><button class="btn" id="rosterClose">✕</button></div>
+    <div class="note" style="margin-top:8px">Keep six therapist slots. Change the names whenever staff changes; the daily team picker will use these names.</div>
+    <div class="setup-list" id="rosterList"></div>
+    <div class="error" id="rosterError"></div>
+    <div class="panelactions"><span></span><button class="btn primary" id="rosterSave">Save therapist names</button></div>
+  </div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="panel">
+    <div class="paneltop"><h2 id="modalTitle">New appointment</h2><button class="btn" id="closeBtn">✕</button></div>
+    <input id="editId" type="hidden">
+    <div class="grid2">
+      <div class="field"><label>Customer</label><input id="customer" placeholder="Name"></div>
+      <div class="field"><label>Phone</label><input id="phone" placeholder="Optional"></div>
+
+      <div class="field"><label>Therapist assignment</label>
+        <select id="therapistMode"><option value="auto">↻ Auto — follow today's order</option><option value="manual">★ Specific therapist</option></select>
+      </div>
+      <div class="field"><label>Specific therapist</label><select id="therapist"></select></div>
+
+      <div class="field"><label>Start time</label><select id="start"></select></div>
+      <div class="field"><label>Status</label><select id="status"><option value="upcoming">Upcoming</option><option value="progress">In progress</option><option value="completed">Completed</option><option value="cancelled">Cancelled / no-show</option></select></div>
+
+      <div class="field"><label>Checkout</label><select id="checkout"><option value="pending">Pending</option><option value="paid">Paid ✓</option></select></div>
+      <div class="field"><label>Tip method</label><select id="tipMethod"><option value="none">No tip</option><option value="cash">💵 Cash</option><option value="digital">📱 Digital</option></select></div>
+      <div class="field"><label>Tip amount</label><input id="tipAmount" type="number" min="0" step="1" value="0"></div>
+      <div class="field"><label>Quick preset</label><select id="preset"></select></div>
+    </div>
+
+    <div class="builder">
+      <div class="buildertop">
+        <div><strong style="font-size:13px">Service builder</strong><div class="note" id="durationText"></div></div>
+        <button class="btn small" id="addPartBtn">＋ Add service part</button>
+      </div>
+      <div id="parts"></div>
+      <div class="info" id="autoInfo"></div>
+    </div>
+
+    <div class="error" id="error"></div>
+    <div class="panelactions">
+      <button class="btn" id="deleteBtn">Delete</button>
+      <div><button class="btn" id="cancelBtn">Cancel</button> <button class="btn primary" id="saveBtn">Save</button></div>
+    </div>
+  </div>
+</div>
+
 <script>
 (function(){
-const therapists=["David","Kayla","Yaya","Maggie","Tom","Steven"];
-const rooms=[{id:"R1A",name:"Foot 1A"},{id:"R1B",name:"Foot 1B"},{id:"R2A",name:"Foot 2A"},{id:"R2B",name:"Foot 2B"},{id:"R3",name:"Body 3"},{id:"R4",name:"Body 4"},{id:"NR",name:"No room"}];
-const services={foot30:{name:"30 Foot",duration:30,p:false},foot60:{name:"60 Foot",duration:60,p:false},body30:{name:"30 Body",duration:30,p:false},body60:{name:"60 Body",duration:60,p:true},body90:{name:"90 Body",duration:90,p:true},A:{name:"Package A · 30 Foot + 30 Body",duration:60,split:[30,30],p:false},B:{name:"Package B · 60 Foot + 30 Body",duration:90,split:[60,30],p:false},C:{name:"Package C · 30 Foot + 60 Body",duration:90,split:[30,60],p:true},D:{name:"Package D · 60 Foot + 60 Body",duration:120,split:[60,60],p:true},scalp:{name:"Scalp · 10 min",duration:10,noRoom:true,p:false},chair:{name:"Chair · 30 min",duration:30,noRoom:true,p:false}};
-const KEY="nomad-scheduler-v1";let bookings=load(),mobileFilter="All";function demo(){return[{id:"1",customer:"Rose",phone:"",therapist:"Yaya",service:"foot60",start:60,status:"completed",privacy:false,checkout:"paid",tipMethod:"cash",tipAmount:18,segments:[{room:"R1A",duration:60}]},{id:"2",customer:"Ren",phone:"",therapist:"Kayla",service:"body90",start:0,status:"progress",privacy:true,checkout:"pending",tipMethod:"digital",tipAmount:25,segments:[{room:"R3",duration:90}]},{id:"3",customer:"Harris",phone:"",therapist:"David",service:"B",start:210,status:"upcoming",privacy:false,checkout:"pending",tipMethod:"none",tipAmount:0,segments:[{room:"R2A",duration:60},{room:"R4",duration:30}]}]};function load(){try{const x=JSON.parse(localStorage.getItem(KEY));return Array.isArray(x)?x:demo()}catch(e){return demo()}}function saveLocal(){localStorage.setItem(KEY,JSON.stringify(bookings))}function el(id){return document.getElementById(id)}function fmt(m){const total=600+m,h=Math.floor(total/60),mm=total%60,ap=h>=12?"PM":"AM",hh=((h+11)%12)+1;return hh+":"+String(mm).padStart(2,"0")+" "+ap}function money(n){return "$"+Number(n||0).toFixed(0)}function overlap(a1,a2,b1,b2){return Math.max(a1,b1)<Math.min(a2,b2)}function sibling(r){return({R1A:"R1B",R1B:"R1A",R2A:"R2B",R2B:"R2A"})[r]||""}function offsets(b){let o=0;return b.segments.map(s=>{const x={room:s.room,duration:s.duration,offset:o};o+=s.duration;return x})}
-const modal=el("modal"),customer=el("customer"),phone=el("phone"),therapist=el("therapist"),service=el("service"),start=el("start"),status=el("status"),privacy=el("privacy"),checkout=el("checkout"),tipMethod=el("tipMethod"),tipAmount=el("tipAmount"),room1=el("room1"),room2=el("room2"),dur1=el("dur1"),dur2=el("dur2"),seg2row=el("seg2row"),error=el("error");
-function populate(){therapist.innerHTML=therapists.map(x=>"<option>"+x+"</option>").join("");service.innerHTML=Object.entries(services).map(([k,v])=>'<option value="'+k+'">'+v.name+"</option>").join("");for(let m=0;m<=630;m+=30)start.insertAdjacentHTML("beforeend",'<option value="'+m+'">'+fmt(m)+"</option>");const ro=rooms.map(r=>'<option value="'+r.id+'">'+r.name+"</option>").join("");room1.innerHTML=ro;room2.innerHTML=ro}
-function setDur(sel,max){sel.innerHTML="";[10,30,60,90,120].filter(x=>x<=max).forEach(x=>sel.insertAdjacentHTML("beforeend",'<option value="'+x+'">'+x+" min</option>"))}
-function syncService(){const s=services[service.value];privacy.value=String(s.p);el("durationText").textContent="Total duration: "+s.duration+" min";if(s.noRoom){room1.value="NR";setDur(dur1,s.duration);dur1.value=String(s.duration);seg2row.style.display="none";return}if(s.split){setDur(dur1,s.duration);setDur(dur2,s.duration);dur1.value=String(s.split[0]);dur2.value=String(s.split[1]);seg2row.style.display="grid";room1.value="R1A";room2.value="R3"}else{setDur(dur1,s.duration);dur1.value=String(s.duration);seg2row.style.display="none"}}
-function render(){renderDesktop();renderMobile();renderTips()}
-function renderDesktop(){const s=el("schedule");s.innerHTML='<div class="head">Time</div>'+rooms.map(r=>'<div class="head">'+r.name+"</div>").join("");const tc=document.createElement("div");tc.className="timecol";for(let i=0;i<=11;i++){const sp=document.createElement("span");sp.className="time";sp.style.top=(i*72)+"px";sp.textContent=fmt(i*60);tc.appendChild(sp)}s.appendChild(tc);rooms.forEach(r=>{const d=document.createElement("div");d.className="lane";d.dataset.room=r.id;s.appendChild(d)});bookings.forEach(b=>offsets(b).forEach((sg,i)=>draw(b,sg,i)))}
-function draw(b,sg,i){const lane=document.querySelector('[data-room="'+sg.room+'"]');if(!lane)return;const btn=document.createElement("button");btn.type="button";btn.className="booking "+b.status;btn.style.top=((b.start+sg.offset)/60*72)+"px";btn.style.height=Math.max(24,sg.duration/60*72-5)+"px";const tip=b.tipMethod==="cash"?"💵 "+money(b.tipAmount):b.tipMethod==="digital"?"📱 "+money(b.tipAmount):"";btn.innerHTML='<div class="btitle">'+services[b.service].name+(b.segments.length>1?" · "+(i+1)+"/"+b.segments.length:"")+'</div><div class="bmeta">'+b.customer+" · "+b.therapist+'</div><div class="bmeta">'+fmt(b.start+sg.offset)+"–"+fmt(b.start+sg.offset+sg.duration)+(b.privacy?" · 🔒":"")+'</div><div class="bmeta">'+tip+(b.checkout==="paid"?" · ✓ Paid":"")+"</div>";btn.onclick=()=>openEdit(b.id);lane.appendChild(btn)}
-function renderMobile(){const f=el("filters");f.innerHTML=["All",...therapists].map(x=>'<button class="chip '+(x===mobileFilter?"active":"")+'" data-f="'+x+'">'+x+"</button>").join("");f.querySelectorAll("button").forEach(b=>b.onclick=()=>{mobileFilter=b.dataset.f;renderMobile()});const list=el("mlist");list.innerHTML="";bookings.filter(b=>mobileFilter==="All"||b.therapist===mobileFilter).sort((a,b)=>a.start-b.start).forEach(b=>{const d=document.createElement("button");d.type="button";d.className="mcard "+b.status;const tip=b.tipMethod==="cash"?"💵 "+money(b.tipAmount):b.tipMethod==="digital"?"📱 "+money(b.tipAmount):"";d.innerHTML='<div class="mtop"><div class="mtime">'+fmt(b.start)+"–"+fmt(b.start+services[b.service].duration)+'</div><div>'+b.therapist+'</div></div><div><strong>'+services[b.service].name+"</strong> · "+b.customer+'</div><div class="msub">'+b.segments.map(x=>rooms.find(r=>r.id===x.room).name).join(" → ")+(tip?" · "+tip:"")+(b.checkout==="paid"?" · ✓ Paid":"")+"</div>";d.onclick=()=>openEdit(b.id);list.appendChild(d)})}
-function renderTips(){el("tipRows").innerHTML=therapists.map(t=>{const a=bookings.filter(b=>b.therapist===t&&b.status!=="cancelled"),c=a.filter(b=>b.tipMethod==="cash").reduce((x,b)=>x+Number(b.tipAmount||0),0),d=a.filter(b=>b.tipMethod==="digital").reduce((x,b)=>x+Number(b.tipAmount||0),0);return"<tr><td><strong>"+t+"</strong></td><td>"+money(c)+"</td><td>"+money(d)+"</td><td><strong>"+money(d)+"</strong></td></tr>"}).join("")}
-function openNew(){el("modalTitle").textContent="New appointment";el("editId").value="";customer.value="";phone.value="";therapist.value="David";service.value="foot60";start.value="0";status.value="upcoming";privacy.value="false";checkout.value="pending";tipMethod.value="none";tipAmount.value="0";error.classList.remove("show");syncService();modal.classList.add("open")}
-function openEdit(id){const b=bookings.find(x=>x.id===id);if(!b)return;el("modalTitle").textContent="Edit appointment";el("editId").value=b.id;customer.value=b.customer;phone.value=b.phone||"";therapist.value=b.therapist;service.value=b.service;start.value=String(b.start);status.value=b.status;privacy.value=String(b.privacy);checkout.value=b.checkout||"pending";tipMethod.value=b.tipMethod;tipAmount.value=String(b.tipAmount||0);syncService();room1.value=b.segments[0].room;setDur(dur1,services[b.service].duration);dur1.value=String(b.segments[0].duration);if(b.segments.length>1){seg2row.style.display="grid";setDur(dur2,services[b.service].duration);room2.value=b.segments[1].room;dur2.value=String(b.segments[1].duration)}else seg2row.style.display="none";error.classList.remove("show");modal.classList.add("open")}
-function build(){const s=services[service.value],segs=[{room:s.noRoom?"NR":room1.value,duration:Number(dur1.value)}];if(seg2row.style.display!=="none")segs.push({room:room2.value,duration:Number(dur2.value)});if(segs.reduce((a,x)=>a+x.duration,0)!==s.duration)throw new Error("Room segment durations must add up to "+s.duration+" minutes.");return{id:el("editId").value||String(Date.now()),customer:customer.value.trim(),phone:phone.value.trim(),therapist:therapist.value,service:service.value,start:Number(start.value),status:status.value,privacy:privacy.value==="true",checkout:checkout.value,tipMethod:tipMethod.value,tipAmount:Math.max(0,Number(tipAmount.value)||0),segments:segs}}
-function validate(c){if(!c.customer)return"Please enter customer name.";if(c.start+services[c.service].duration>660)return"This appointment ends after 9:00 PM.";for(const b of bookings){if(b.id===c.id||b.status==="cancelled"||c.status==="cancelled")continue;if(b.therapist===c.therapist&&overlap(c.start,c.start+services[c.service].duration,b.start,b.start+services[b.service].duration))return"Therapist conflict: "+c.therapist+" already has "+b.customer+".";for(const a of offsets(c))for(const z of offsets(b)){const a1=c.start+a.offset,a2=a1+a.duration,z1=b.start+z.offset,z2=z1+z.duration;if(!overlap(a1,a2,z1,z2))continue;if(a.room===z.room&&a.room!=="NR")return"Room conflict: "+rooms.find(r=>r.id===a.room).name+" is occupied.";if(sibling(a.room)===z.room&&(c.privacy||b.privacy))return"Privacy conflict: a private body service locks both beds in that foot room."}}return""}
-function save(){try{const c=build(),msg=validate(c);if(msg){error.textContent=msg;error.classList.add("show");return}bookings=bookings.filter(b=>b.id!==c.id);bookings.push(c);saveLocal();render();modal.classList.remove("open")}catch(e){error.textContent=e.message;error.classList.add("show")}}
-el("addBtn").onclick=openNew;el("closeBtn").onclick=()=>modal.classList.remove("open");el("cancelBtn").onclick=()=>modal.classList.remove("open");el("saveBtn").onclick=save;el("deleteBtn").onclick=()=>{const id=el("editId").value;if(id){bookings=bookings.filter(b=>b.id!==id);saveLocal();render()}modal.classList.remove("open")};service.onchange=syncService;modal.onclick=e=>{if(e.target===modal)modal.classList.remove("open")};populate();syncService();render();
+const DEFAULT_THERAPISTS=["David","Kayla","Yaya","Maggie","Tom","Steven"];
+const ROSTER_KEY="nomad-scheduler-v1-3-roster";
+let ALL_THERAPISTS=loadRoster();
+const rooms=[
+  {id:"R1A",name:"Foot 1A"},{id:"R1B",name:"Foot 1B"},{id:"R2A",name:"Foot 2A"},{id:"R2B",name:"Foot 2B"},
+  {id:"R3",name:"Body 3"},{id:"R4",name:"Body 4"},{id:"NR",name:"No room"}
+];
+const footRooms=["R1A","R1B","R2A","R2B"];
+const kinds={
+  foot:{label:"Foot",durations:[30,60],noRoom:false},
+  body:{label:"Body",durations:[30,60,90,120],noRoom:false},
+  scalp:{label:"Scalp",durations:[10],noRoom:true},
+  chair:{label:"Chair",durations:[30],noRoom:true}
+};
+const presets={
+  foot30:{label:"30 Foot",parts:[["foot",30]]},
+  foot60:{label:"60 Foot",parts:[["foot",60]]},
+  footScalp:{label:"60 Foot + 10 Scalp",parts:[["foot",60],["scalp",10]]},
+  body30:{label:"30 Body",parts:[["body",30]]},
+  body60:{label:"60 Body",parts:[["body",60]]},
+  body90:{label:"90 Body",parts:[["body",90]]},
+  body120:{label:"2h Body",parts:[["body",120]]},
+  A:{label:"Package A · 30 Foot + 30 Body",parts:[["foot",30],["body",30]]},
+  B:{label:"Package B · 60 Foot + 30 Body",parts:[["foot",60],["body",30]]},
+  C:{label:"Package C · 30 Foot + 60 Body",parts:[["foot",30],["body",60]]},
+  D:{label:"Package D · 60 Foot + 60 Body",parts:[["foot",60],["body",60]]},
+  custom:{label:"Custom combination",parts:null}
+};
+
+function localDateISO(){
+  const d=new Date(), y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,"0"), day=String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${day}`;
+}
+const TODAY=localDateISO();
+const BOOK_KEY="nomad-scheduler-v1-3-"+TODAY;
+const SETUP_KEY="nomad-scheduler-v1-3-team-"+TODAY;
+let bookings=loadBookings();
+let dayOrder=loadSetup();
+let mobileFilter="All";
+let editingParts=[];
+let setupDraft=[];
+
+function el(id){return document.getElementById(id)}
+function clone(x){return JSON.parse(JSON.stringify(x))}
+function loadRoster(){
+  try{
+    const x=JSON.parse(localStorage.getItem(ROSTER_KEY));
+    return Array.isArray(x)&&x.length===6&&x.every(n=>typeof n==="string"&&n.trim()) ? x : [...DEFAULT_THERAPISTS];
+  }catch(e){return [...DEFAULT_THERAPISTS]}
+}
+function saveRosterLocal(){localStorage.setItem(ROSTER_KEY,JSON.stringify(ALL_THERAPISTS))}
+function loadBookings(){try{const x=JSON.parse(localStorage.getItem(BOOK_KEY));return Array.isArray(x)?x:[]}catch(e){return []}}
+function saveLocal(){localStorage.setItem(BOOK_KEY,JSON.stringify(bookings))}
+function loadSetup(){try{const x=JSON.parse(localStorage.getItem(SETUP_KEY));return Array.isArray(x)?x:[]}catch(e){return []}}
+function saveSetup(){localStorage.setItem(SETUP_KEY,JSON.stringify(dayOrder))}
+function fmt(m){const total=600+m,h=Math.floor(total/60),mm=total%60,ap=h>=12?"PM":"AM",hh=((h+11)%12)+1;return hh+":"+String(mm).padStart(2,"0")+" "+ap}
+function money(n){return "$"+Number(n||0).toFixed(0)}
+function overlap(a1,a2,b1,b2){return Math.max(a1,b1)<Math.min(a2,b2)}
+function sibling(r){return({R1A:"R1B",R1B:"R1A",R2A:"R2B",R2B:"R2A"})[r]||""}
+function totalDuration(b){return (b.parts||[]).reduce((a,p)=>a+Number(p.duration||0),0)}
+function serviceName(b){return (b.parts||[]).map(p=>p.duration+" "+kinds[p.kind].label).join(" + ")}
+function offsets(b){let o=0;return (b.parts||[]).map((p,i)=>{const x={...p,offset:o,index:i};o+=Number(p.duration);return x})}
+function isBodyInFoot(p){return p.kind==="body"&&footRooms.includes(p.room)}
+function showToast(msg){const t=el("toast");t.textContent=msg;t.classList.add("show");clearTimeout(showToast.timer);showToast.timer=setTimeout(()=>t.classList.remove("show"),2000)}
+function todayDisplay(){return new Date(TODAY+"T12:00:00").toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"})}
+
+const modal=el("modal"),setupModal=el("setupModal"),rosterModal=el("rosterModal"),customer=el("customer"),phone=el("phone"),therapistMode=el("therapistMode"),
+therapist=el("therapist"),start=el("start"),status=el("status"),checkout=el("checkout"),tipMethod=el("tipMethod"),tipAmount=el("tipAmount"),
+preset=el("preset"),partsEl=el("parts"),error=el("error"),setupError=el("setupError"),rosterError=el("rosterError");
+
+function populateStatic(){
+  start.innerHTML="";
+  for(let m=0;m<=650;m+=10)start.insertAdjacentHTML("beforeend",'<option value="'+m+'">'+fmt(m)+"</option>");
+  preset.innerHTML=Object.entries(presets).map(([k,v])=>'<option value="'+k+'">'+v.label+"</option>").join("");
+  updateTherapistSelect();
+}
+function updateTherapistSelect(){
+  const list=dayOrder.length?dayOrder:ALL_THERAPISTS;
+  therapist.innerHTML=list.map(x=>"<option>"+x+"</option>").join("");
+  therapist.disabled=therapistMode.value==="auto";
+}
+function renderDaybar(){
+  el("daybar").innerHTML='<span class="daylabel">'+todayDisplay()+' · Working order:</span>'+
+    (dayOrder.length?dayOrder.map((t,i)=>'<span class="teamchip"><strong>'+(i+1)+'</strong> '+t+'</span>').join(""):'<span class="teamchip">Not set</span>');
+  el("rotationNote").textContent=dayOrder.length?dayOrder.map((t,i)=>(i+1)+". "+t).join("  ·  "):"Set today's therapists before booking.";
+}
+function openSetup(force=false){
+  setupDraft=ALL_THERAPISTS.map(name=>({name,on:dayOrder.length?dayOrder.includes(name):true}));
+  if(dayOrder.length){
+    setupDraft.sort((a,b)=>{
+      const ia=dayOrder.indexOf(a.name),ib=dayOrder.indexOf(b.name);
+      if(ia===-1&&ib===-1)return ALL_THERAPISTS.indexOf(a.name)-ALL_THERAPISTS.indexOf(b.name);
+      if(ia===-1)return 1;if(ib===-1)return -1;return ia-ib;
+    });
+  }
+  setupError.classList.remove("show");
+  renderSetupList();
+  setupModal.classList.add("open");
+  setupModal.dataset.force=force?"1":"0";
+}
+function renderSetupList(){
+  el("setupList").innerHTML="";
+  setupDraft.forEach((x,i)=>{
+    const row=document.createElement("div");row.className="setup-row"+(x.on?"":" off");
+    const activeBefore=setupDraft.slice(0,i).filter(y=>y.on).length;
+    row.innerHTML='<input type="checkbox" '+(x.on?"checked":"")+' aria-label="working">'+
+      '<div><div class="setup-name">'+x.name+'</div><div class="note">'+(x.on?"Priority "+(activeBefore+1):"Off today")+'</div></div>'+
+      '<button class="btn small" data-up>↑</button><button class="btn small" data-down>↓</button>';
+    row.querySelector("input").onchange=e=>{x.on=e.target.checked;renderSetupList()};
+    row.querySelector("[data-up]").onclick=()=>{if(i>0){[setupDraft[i-1],setupDraft[i]]=[setupDraft[i],setupDraft[i-1]];renderSetupList()}};
+    row.querySelector("[data-down]").onclick=()=>{if(i<setupDraft.length-1){[setupDraft[i+1],setupDraft[i]]=[setupDraft[i],setupDraft[i+1]];renderSetupList()}};
+    el("setupList").appendChild(row);
+  });
+}
+function saveTeam(){
+  const selected=setupDraft.filter(x=>x.on).map(x=>x.name);
+  if(!selected.length){setupError.textContent="Choose at least one therapist.";setupError.classList.add("show");return}
+  const manualAbsent=bookings.filter(b=>b.therapistMode==="manual"&&b.status!=="cancelled"&&!selected.includes(b.therapist));
+  if(manualAbsent.length&&!confirm("Some existing specific-therapist appointments use a therapist you turned off today. Keep this team change anyway?"))return;
+  dayOrder=selected;saveSetup();updateTherapistSelect();
+  const result=rebalanceAuto(bookings);
+  if(result.ok)bookings=result.bookings;
+  saveLocal();render();setupModal.classList.remove("open");showToast("Today's team saved.");
+}
+
+
+function openRoster(){
+  rosterError.classList.remove("show");
+  const list=el("rosterList");list.innerHTML="";
+  ALL_THERAPISTS.forEach((name,i)=>{
+    const row=document.createElement("div");row.className="setup-row";
+    row.innerHTML='<div class="setup-num">'+(i+1)+'</div><div class="field" style="margin:0"><label>Therapist '+(i+1)+'</label><input data-roster-index="'+i+'" value="'+escapeHtml(name)+'"></div><span></span><span></span>';
+    list.appendChild(row);
+  });
+  rosterModal.classList.add("open");
+}
+function escapeHtml(s){
+  return String(s)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+function saveRoster(){
+  const inputs=[...el("rosterList").querySelectorAll("input")];
+  const next=inputs.map(x=>x.value.trim());
+  if(next.some(x=>!x)){rosterError.textContent="All six therapist names are required.";rosterError.classList.add("show");return}
+  if(new Set(next.map(x=>x.toLowerCase())).size!==6){rosterError.textContent="Therapist names must be unique.";rosterError.classList.add("show");return}
+  const old=[...ALL_THERAPISTS], renameMap=new Map(old.map((n,i)=>[n,next[i]]));
+  ALL_THERAPISTS=next;saveRosterLocal();
+
+  // Update today's working order and today's bookings if a slot name changed.
+  dayOrder=dayOrder.map(n=>renameMap.get(n)||n).filter((n,i,a)=>ALL_THERAPISTS.includes(n)&&a.indexOf(n)===i);
+  bookings=bookings.map(b=>({...b,therapist:renameMap.get(b.therapist)||b.therapist}));
+  saveSetup();saveLocal();updateTherapistSelect();render();
+
+  rosterModal.classList.remove("open");
+  // Refresh the current team setup modal to show the new names.
+  if(setupModal.classList.contains("open")){
+    setupDraft=ALL_THERAPISTS.map(name=>({name,on:dayOrder.includes(name)}));
+    setupDraft.sort((a,b)=>{
+      const ia=dayOrder.indexOf(a.name),ib=dayOrder.indexOf(b.name);
+      if(ia===-1&&ib===-1)return ALL_THERAPISTS.indexOf(a.name)-ALL_THERAPISTS.indexOf(b.name);
+      if(ia===-1)return 1;if(ib===-1)return -1;return ia-ib;
+    });
+    renderSetupList();
+  }
+  showToast("Therapist names updated.");
+}
+
+function applyPreset(key,prefillRoom){
+  const spec=presets[key];
+  if(!spec||!spec.parts)return;
+  editingParts=spec.parts.map(([kind,duration],i)=>({
+    kind,duration,
+    room:kinds[kind].noRoom?"NR":defaultRoomFor(kind,i===0?prefillRoom:null)
+  }));
+  renderParts();
+}
+function defaultRoomFor(kind,prefill){
+  if(kinds[kind].noRoom)return"NR";
+  if(prefill&&prefill!=="NR"){
+    if(kind==="body"&&footRooms.includes(prefill))return prefill;
+    if(kind==="body"&&["R3","R4"].includes(prefill))return prefill;
+    if(kind==="foot")return prefill;
+  }
+  return kind==="body"?"R3":"R1A";
+}
+function renderParts(){
+  partsEl.innerHTML="";
+  editingParts.forEach((p,i)=>{
+    const row=document.createElement("div");row.className="partrow";
+    const kindOpts=Object.entries(kinds).map(([k,v])=>'<option value="'+k+'" '+(k===p.kind?"selected":"")+'>'+v.label+"</option>").join("");
+    const durOpts=kinds[p.kind].durations.map(d=>'<option value="'+d+'" '+(Number(d)===Number(p.duration)?"selected":"")+'>'+d+" min</option>").join("");
+    const roomOpts=rooms.map(r=>'<option value="'+r.id+'" '+(r.id===p.room?"selected":"")+' '+(kinds[p.kind].noRoom&&r.id!=="NR"?"disabled":"")+'>'+r.name+"</option>").join("");
+    row.innerHTML='<div class="field"><label>Part '+(i+1)+'</label><select data-kind>'+kindOpts+'</select></div>'+
+      '<div class="field"><label>Duration</label><select data-dur>'+durOpts+'</select></div>'+
+      '<div class="field room-field"><label>Room</label><select data-room>'+roomOpts+'</select></div>'+
+      '<div class="remove-wrap"><button class="btn" data-remove>Remove</button></div>';
+    const k=row.querySelector("[data-kind]"),d=row.querySelector("[data-dur]"),r=row.querySelector("[data-room]");
+    k.onchange=()=>{
+      p.kind=k.value;p.duration=kinds[p.kind].durations[0];
+      p.room=kinds[p.kind].noRoom?"NR":defaultRoomFor(p.kind,p.room);
+      preset.value="custom";renderParts();
+    };
+    d.onchange=()=>{p.duration=Number(d.value);preset.value="custom";updateBuilderInfo()};
+    r.onchange=()=>{p.room=r.value;preset.value="custom";updateBuilderInfo()};
+    row.querySelector("[data-remove]").onclick=()=>{editingParts.splice(i,1);preset.value="custom";renderParts()};
+    partsEl.appendChild(row);
+  });
+  updateBuilderInfo();
+}
+function updateBuilderInfo(){
+  const total=editingParts.reduce((a,p)=>a+Number(p.duration||0),0);
+  el("durationText").textContent="Total appointment time: "+total+" min · "+(editingParts.length?editingParts.map(p=>p.duration+" "+kinds[p.kind].label).join(" + "):"No service parts");
+  const bodyFoot=editingParts.filter(isBodyInFoot);
+  el("autoInfo").textContent=bodyFoot.length?
+    "Room rule: Body is placed in a double Foot Room, so the paired bed will be blocked automatically for that time.":
+    "Tip: combine services freely, e.g. 60 Foot + 10 Scalp, 90 Body, 2h Body, or Foot + Body.";
+}
+
+function render(){
+  renderDaybar();renderDesktop();renderMobile();renderTips();
+}
+function renderDesktop(){
+  const s=el("schedule");
+  s.innerHTML='<div class="head">Time</div>'+rooms.map(r=>'<div class="head">'+r.name+"</div>").join("");
+  const tc=document.createElement("div");tc.className="timecol";
+  for(let i=0;i<=11;i++){const sp=document.createElement("span");sp.className="time";sp.style.top=(i*72)+"px";sp.textContent=fmt(i*60);tc.appendChild(sp)}
+  s.appendChild(tc);
+  rooms.forEach(r=>{
+    const d=document.createElement("div");d.className="lane";d.dataset.room=r.id;
+    d.addEventListener("click",e=>{
+      if(e.target!==d)return;
+      const rect=d.getBoundingClientRect();
+      let mins=Math.round(((e.clientY-rect.top)/72*60)/10)*10;
+      mins=Math.max(0,Math.min(650,mins));
+      openNew(mins,r.id);
+    });
+    s.appendChild(d)
+  });
+
+  // Gray the paired bed whenever a Body segment is placed in a double foot room.
+  bookings.filter(b=>b.status!=="cancelled").forEach(b=>{
+    offsets(b).filter(isBodyInFoot).forEach(p=>{
+      const paired=sibling(p.room), lane=document.querySelector('[data-room="'+paired+'"]');
+      if(!lane)return;
+      const lock=document.createElement("div");lock.className="roomlock";
+      lock.style.top=((b.start+p.offset)/60*72)+"px";
+      lock.style.height=Math.max(20,p.duration/60*72)+"px";
+      lock.textContent="Locked · Body in "+rooms.find(r=>r.id===p.room).name;
+      lane.appendChild(lock);
+    });
+  });
+
+  bookings.forEach(b=>offsets(b).forEach(p=>draw(b,p)));
+}
+function draw(b,p){
+  const lane=document.querySelector('[data-room="'+p.room+'"]');if(!lane)return;
+  const btn=document.createElement("button");btn.type="button";btn.className="booking "+b.status;
+  btn.style.top=((b.start+p.offset)/60*72)+"px";btn.style.height=Math.max(24,p.duration/60*72-5)+"px";
+  const tip=b.tipMethod==="cash"?"💵 "+money(b.tipAmount):b.tipMethod==="digital"?"📱 "+money(b.tipAmount):"";
+  const mode=b.therapistMode==="manual"?"★":"↻";
+  btn.innerHTML='<div class="btitle">'+p.duration+" "+kinds[p.kind].label+'</div>'+
+    '<div class="bmeta">'+b.customer+" · "+mode+" "+(b.therapist||"Unassigned")+'</div>'+
+    '<div class="bmeta">'+fmt(b.start+p.offset)+"–"+fmt(b.start+p.offset+p.duration)+(isBodyInFoot(p)?" · locks pair":"")+'</div>'+
+    '<div class="bmeta">'+tip+(b.checkout==="paid"?" · ✓ Paid":"")+"</div>";
+  let drag=null;
+  btn.addEventListener("pointerdown",e=>{
+    if(e.button!==undefined&&e.button!==0)return;
+    e.preventDefault();e.stopPropagation();
+    drag={x:e.clientX,y:e.clientY,lastX:e.clientX,lastY:e.clientY,moved:false};
+    btn.setPointerCapture?.(e.pointerId);
+  });
+  btn.addEventListener("pointermove",e=>{
+    if(!drag)return;drag.lastX=e.clientX;drag.lastY=e.clientY;
+    const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.hypot(dx,dy)>6)drag.moved=true;
+    if(drag.moved){btn.classList.add("dragging");btn.style.transform="translate("+dx+"px,"+dy+"px)"}
+  });
+  btn.addEventListener("pointerup",()=>{
+    if(!drag)return;
+    const wasMoved=drag.moved,x=drag.lastX,y=drag.lastY;drag=null;btn.classList.remove("dragging");btn.style.transform="";
+    if(!wasMoved){openEdit(b.id);return}
+    const lanes=[...document.querySelectorAll(".lane")];
+    const target=lanes.find(l=>{const r=l.getBoundingClientRect();return x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom});
+    if(!target){showToast("Drop inside the schedule grid.");return}
+    const room=target.dataset.room;
+    if(kinds[p.kind].noRoom&&room!=="NR"){showToast("Scalp / Chair belongs in No room.");return}
+    if(!kinds[p.kind].noRoom&&room==="NR"){showToast("This service part needs a room.");return}
+    const rect=target.getBoundingClientRect();
+    let segStart=Math.round((((y-rect.top)/72)*60)/10)*10;
+    let newStart=segStart-p.offset;
+    newStart=Math.max(0,Math.min(660-totalDuration(b),newStart));
+    let candidateList=clone(bookings), cb=candidateList.find(x=>x.id===b.id), cp=cb.parts[p.index];
+    cb.start=newStart;cp.room=room;
+    const roomMsg=validateRoomConflicts(cb,candidateList);
+    if(roomMsg){showToast(roomMsg);return}
+    const assigned=rebalanceAuto(candidateList);
+    if(!assigned.ok){showToast(assigned.error);return}
+    bookings=assigned.bookings;saveLocal();render();showToast("Appointment moved.");
+  });
+  btn.addEventListener("pointercancel",()=>{drag=null;btn.classList.remove("dragging");btn.style.transform=""});
+  lane.appendChild(btn);
+}
+function renderMobile(){
+  const f=el("filters"), filters=["All",...dayOrder];
+  f.innerHTML=filters.map(x=>'<button class="chip '+(x===mobileFilter?"active":"")+'" data-f="'+x+'">'+x+"</button>").join("");
+  f.querySelectorAll("button").forEach(b=>b.onclick=()=>{mobileFilter=b.dataset.f;renderMobile()});
+  const list=el("mlist");list.innerHTML="";
+  bookings.filter(b=>mobileFilter==="All"||b.therapist===mobileFilter).sort((a,b)=>a.start-b.start).forEach(b=>{
+    const d=document.createElement("button");d.type="button";d.className="mcard "+b.status;
+    const tip=b.tipMethod==="cash"?"💵 "+money(b.tipAmount):b.tipMethod==="digital"?"📱 "+money(b.tipAmount):"";
+    d.innerHTML='<div class="mtop"><div class="mtime">'+fmt(b.start)+"–"+fmt(b.start+totalDuration(b))+'</div><div>'+(b.therapistMode==="manual"?"★":"↻")+" "+(b.therapist||"Unassigned")+'</div></div>'+
+      '<div><strong>'+serviceName(b)+"</strong> · "+b.customer+'</div>'+
+      '<div class="msub">'+b.parts.map(x=>rooms.find(r=>r.id===x.room).name).join(" → ")+(tip?" · "+tip:"")+(b.checkout==="paid"?" · ✓ Paid":"")+"</div>";
+    d.onclick=()=>openEdit(b.id);list.appendChild(d)
+  });
+}
+function renderTips(){
+  el("tipRows").innerHTML=dayOrder.map(t=>{
+    const a=bookings.filter(b=>b.therapist===t&&b.status!=="cancelled"),
+      c=a.filter(b=>b.tipMethod==="cash").reduce((x,b)=>x+Number(b.tipAmount||0),0),
+      d=a.filter(b=>b.tipMethod==="digital").reduce((x,b)=>x+Number(b.tipAmount||0),0);
+    return"<tr><td><strong>"+t+"</strong></td><td>"+money(c)+"</td><td>"+money(d)+"</td><td><strong>"+money(d)+"</strong></td></tr>"
+  }).join("");
+}
+
+function openNew(prefillStart=0,prefillRoom="R1A"){
+  if(!dayOrder.length){openSetup(true);showToast("Set today's therapists first.");return}
+  el("modalTitle").textContent="New appointment";el("editId").value="";
+  customer.value="";phone.value="";therapistMode.value="auto";updateTherapistSelect();
+  start.value=String(prefillStart);status.value="upcoming";checkout.value="pending";tipMethod.value="none";tipAmount.value="0";
+  preset.value="foot60";editingParts=[{kind:"foot",duration:60,room:prefillRoom==="NR"?"R1A":prefillRoom}];
+  error.classList.remove("show");renderParts();modal.classList.add("open");
+}
+function openEdit(id){
+  const b=bookings.find(x=>x.id===id);if(!b)return;
+  el("modalTitle").textContent="Edit appointment";el("editId").value=b.id;
+  customer.value=b.customer;phone.value=b.phone||"";therapistMode.value=b.therapistMode||"manual";updateTherapistSelect();
+  if(b.therapist&&[...therapist.options].some(o=>o.value===b.therapist))therapist.value=b.therapist;
+  start.value=String(b.start);status.value=b.status;checkout.value=b.checkout||"pending";tipMethod.value=b.tipMethod||"none";tipAmount.value=String(b.tipAmount||0);
+  preset.value="custom";editingParts=clone(b.parts||[]);error.classList.remove("show");renderParts();modal.classList.add("open");
+}
+function buildBooking(){
+  if(!editingParts.length)throw new Error("Add at least one service part.");
+  const parts=editingParts.map(p=>({kind:p.kind,duration:Number(p.duration),room:kinds[p.kind].noRoom?"NR":p.room}));
+  const total=parts.reduce((a,p)=>a+p.duration,0);
+  if(total<=0)throw new Error("Appointment duration is empty.");
+  const mode=therapistMode.value;
+  return{
+    id:el("editId").value||String(Date.now()),createdAt:Number(el("editId").value||Date.now()),
+    customer:customer.value.trim(),phone:phone.value.trim(),
+    therapistMode:mode,therapist:mode==="manual"?therapist.value:"",
+    start:Number(start.value),status:status.value,checkout:checkout.value,
+    tipMethod:tipMethod.value,tipAmount:Math.max(0,Number(tipAmount.value)||0),parts
+  };
+}
+function validateBasics(c){
+  if(!c.customer)return"Please enter customer name.";
+  if(c.start+totalDuration(c)>660)return"This appointment ends after 9:00 PM.";
+  if(c.therapistMode==="manual"&&!dayOrder.includes(c.therapist))return"That therapist is not working today.";
+  return"";
+}
+function validateRoomConflicts(c,list){
+  if(c.status==="cancelled")return"";
+  for(const b of list){
+    if(b.id===c.id||b.status==="cancelled")continue;
+    for(const a of offsets(c))for(const z of offsets(b)){
+      const a1=c.start+a.offset,a2=a1+a.duration,z1=b.start+z.offset,z2=z1+z.duration;
+      if(!overlap(a1,a2,z1,z2))continue;
+      if(a.room===z.room&&a.room!=="NR")return"Room conflict: "+rooms.find(r=>r.id===a.room).name+" is occupied.";
+      if(isBodyInFoot(a)&&sibling(a.room)===z.room)return"Paired bed is locked because Body is using "+rooms.find(r=>r.id===a.room).name+".";
+      if(isBodyInFoot(z)&&sibling(z.room)===a.room)return"Paired bed is locked because Body is using "+rooms.find(r=>r.id===z.room).name+".";
+    }
+  }
+  return"";
+}
+function therapistFree(name,c,list,ignoreIds=new Set()){
+  if(c.status==="cancelled")return true;
+  return !list.some(b=>{
+    if(ignoreIds.has(b.id)||b.id===c.id||b.status==="cancelled"||b.therapist!==name)return false;
+    return overlap(c.start,c.start+totalDuration(c),b.start,b.start+totalDuration(b));
+  });
+}
+function validateManualConflicts(list){
+  const manuals=list.filter(b=>b.status!=="cancelled"&&b.therapistMode==="manual");
+  for(let i=0;i<manuals.length;i++)for(let j=i+1;j<manuals.length;j++){
+    const a=manuals[i],b=manuals[j];
+    if(a.therapist===b.therapist&&overlap(a.start,a.start+totalDuration(a),b.start,b.start+totalDuration(b)))
+      return"Therapist conflict: "+a.therapist+" has overlapping specific appointments.";
+  }
+  return"";
+}
+function rebalanceAuto(list){
+  const work=clone(list);
+  const manualMsg=validateManualConflicts(work);if(manualMsg)return{ok:false,error:manualMsg};
+  work.filter(b=>b.therapistMode==="auto").forEach(b=>b.therapist="");
+  const autos=work.filter(b=>b.status!=="cancelled"&&b.therapistMode==="auto")
+    .sort((a,b)=>a.start-b.start||totalDuration(b)-totalDuration(a)||(a.createdAt||0)-(b.createdAt||0));
+  const assignedBase=work.filter(b=>b.status!=="cancelled"&&b.therapistMode==="manual");
+  const assignedAutos=[];
+  for(const a of autos){
+    const active=[...assignedBase,...assignedAutos];
+    const choice=dayOrder.find(t=>therapistFree(t,a,active,new Set()));
+    if(!choice)return{ok:false,error:"No therapist is available for "+a.customer+" at "+fmt(a.start)+". Please adjust time or choose a specific therapist."};
+    a.therapist=choice;assignedAutos.push(a);
+  }
+  const byId=new Map(work.map(x=>[x.id,x]));
+  return{ok:true,bookings:list.map(x=>byId.get(x.id))};
+}
+function saveBooking(){
+  try{
+    const c=buildBooking(),basic=validateBasics(c);
+    if(basic){error.textContent=basic;error.classList.add("show");return}
+    let next=bookings.filter(b=>b.id!==c.id);next.push(c);
+    const roomMsg=validateRoomConflicts(c,next);
+    if(roomMsg){error.textContent=roomMsg;error.classList.add("show");return}
+    const assigned=rebalanceAuto(next);
+    if(!assigned.ok){error.textContent=assigned.error;error.classList.add("show");return}
+    bookings=assigned.bookings;saveLocal();render();modal.classList.remove("open");
+    if(c.therapistMode==="auto")showToast("Saved · auto rotation assigned therapists.");
+  }catch(e){error.textContent=e.message;error.classList.add("show")}
+}
+
+el("editRosterBtn").onclick=openRoster;
+el("rosterClose").onclick=()=>rosterModal.classList.remove("open");
+el("rosterSave").onclick=saveRoster;
+rosterModal.onclick=e=>{if(e.target===rosterModal)rosterModal.classList.remove("open")};
+
+el("teamBtn").onclick=()=>openSetup(false);
+el("setupClose").onclick=()=>{if(setupModal.dataset.force==="1"&&!dayOrder.length)return;setupModal.classList.remove("open")};
+el("setupSave").onclick=saveTeam;
+setupModal.onclick=e=>{if(e.target===setupModal&&!(setupModal.dataset.force==="1"&&!dayOrder.length))setupModal.classList.remove("open")};
+
+el("addBtn").onclick=()=>openNew();
+el("clearBtn").onclick=()=>{if(confirm("Clear all appointments for today?")){bookings=[];saveLocal();render();showToast("Today's schedule cleared.")}};
+el("closeBtn").onclick=()=>modal.classList.remove("open");
+el("cancelBtn").onclick=()=>modal.classList.remove("open");
+el("saveBtn").onclick=saveBooking;
+el("deleteBtn").onclick=()=>{
+  const id=el("editId").value;
+  if(id){
+    let next=bookings.filter(b=>b.id!==id),assigned=rebalanceAuto(next);
+    bookings=assigned.ok?assigned.bookings:next;saveLocal();render();
+  }
+  modal.classList.remove("open")
+};
+therapistMode.onchange=updateTherapistSelect;
+preset.onchange=()=>{if(preset.value!=="custom")applyPreset(preset.value,null)};
+el("addPartBtn").onclick=()=>{editingParts.push({kind:"foot",duration:60,room:"R1A"});preset.value="custom";renderParts()};
+modal.onclick=e=>{if(e.target===modal)modal.classList.remove("open")};
+
+populateStatic();render();
+if(!dayOrder.length)setTimeout(()=>openSetup(true),150);
 })();
 </script>
 </body>
